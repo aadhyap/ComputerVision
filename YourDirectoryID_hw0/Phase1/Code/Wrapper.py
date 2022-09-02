@@ -140,7 +140,7 @@ def main():
 
 		
 		return kernel
-
+ 
 
 
 
@@ -253,7 +253,7 @@ def main():
 
 
 
-	def LM(sigma):
+	def LM(sigma, num):
 
 		sobel = np.array([
 		  [1, 1, 2],
@@ -269,46 +269,101 @@ def main():
 
 		bank = []
 		#First Derivative Gaussian first 3
-		LM_1 = []
-		for sig in range(3):
+
+
+		if(num == 1):
+			LM_1 = []
+			for sig in range(3):
+			
+				kernel = Gaussian(sigma[sig])
+
+				image1 = Convolve(kernel, sobel)
+				image2 = Convolve(kernel, sobel2)
+				allimg = rotationLM(image1, image2, 1)
+				lm1 = cv2.imread('LM1.jpg')
 		
-			kernel = Gaussian(sigma[sig])
+				LM_1.append(lm1)
 
-			image1 = Convolve(kernel, sobel)
-			image2 = Convolve(kernel, sobel2)
-			allimg = rotationLM(image1, image2, 1)
-			lm1 = cv2.imread('LM1.jpg')
-	
-			LM_1.append(lm1)
-
-
-	
-		img = cv2.vconcat(LM_1)
-		cv2.imwrite('LMFirst.jpg', img)
-
-
-
-		#Second derivative first 3
-		LM_2 = []
-		for sig in range(3):
-			kernel = Gaussian2nd(sigma[sig])
-			image1 = Convolve(kernel, sobel)
-			image2 = Convolve(kernel, sobel2)
-			allimg = rotationLM(image1, image2, 2)
-			lm2 = cv2.imread('LM2.jpg')
 
 		
-			LM_2.append(lm2)
-
-		img2 = cv2.vconcat(LM_2)
-		cv2.imwrite('LMSecond.jpg', img2)
+			img = cv2.vconcat(LM_1)
+			cv2.imwrite('LMFirst.jpg', img)
 
 
 
-		first = cv2.imread('LMFirst.jpg')
-		second = cv2.imread('LMSecond.jpg')
-		finalLM = cv2.hconcat([first, second])
-		cv2.imwrite('LM.jpg', finalLM)
+			#Second derivative first 3
+
+			LM_2 = []
+			for sig in range(3):
+				kernel = Gaussian2nd(sigma[sig])
+				image1 = Convolve(kernel, sobel)
+				image2 = Convolve(kernel, sobel2)
+				allimg = rotationLM(image1, image2, 2)
+				lm2 = cv2.imread('LM2.jpg')
+
+			
+				LM_2.append(lm2)
+
+			img2 = cv2.vconcat(LM_2)
+			cv2.imwrite('LMSecond.jpg', img2)
+
+
+
+			first = cv2.imread('LMFirst.jpg')
+			second = cv2.imread('LMSecond.jpg')
+			finalLM = cv2.hconcat([first, second])
+			print("LM for first  ")
+			print(finalLM)
+			cv2.imwrite('LMsmall.jpg', finalLM)
+
+
+
+
+#LM Large
+
+		if(num ==2):
+			LM_1 = []
+			for sig in range(3):
+			
+				kernel = Gaussian(sigma[sig])
+
+				image1 = Convolve(kernel, sobel)
+				image2 = Convolve(kernel, sobel2)
+				allimg = rotationLM(image1, image2, 1)
+				lm1 = cv2.imread('LM1.jpg')
+		
+				LM_1.append(lm1)
+
+
+		
+			img = cv2.vconcat(LM_1)
+			cv2.imwrite('LMFirst.jpg', img)
+
+
+
+			#Second derivative first 3
+			LM_2 = []
+			for sig in range(3):
+				kernel = Gaussian2nd(sigma[sig])
+				image1 = Convolve(kernel, sobel)
+				image2 = Convolve(kernel, sobel2)
+				allimg = rotationLM(image1, image2, 2)
+				lm2 = cv2.imread('LM2.jpg')
+
+			
+				LM_2.append(lm2)
+
+			img2 = cv2.vconcat(LM_2)
+			cv2.imwrite('LMSecond.jpg', img2)
+
+
+			first = cv2.imread('LMFirst.jpg')
+			second = cv2.imread('LMSecond.jpg')
+			finalLM = cv2.hconcat([first, second])
+			cv2.imwrite('LMlarge.jpg', finalLM)
+
+
+			
 
 
 
@@ -352,7 +407,9 @@ def main():
 
 		#cv2.waitKey(10000)   
 
-	LM(sigma1)
+	LM(sigma1, 1)
+	LM(sigma2, 2)
+
 
 
 	
@@ -426,10 +483,40 @@ def main():
 	full = cv2.hconcat([lg, gau])
 	cv2.imwrite('hconcat.jpg', full)
 
-	finalLM = cv2.imread('LM.jpg')
+	finalLM = cv2.imread('LMsmall.jpg')
 	bottom = cv2.imread('hconcat.jpg')
 	final = cv2.vconcat([finalLM, bottom])
-	cv2.imwrite('LM.jpg', final)
+	cv2.imwrite('LMsmall.jpg', final)
+
+
+	gau = []
+	for sig in sigma2:
+			
+		kernel = Gaussian(sig)
+		image = Convolve(kernel, sobelGaus)
+		gau.append(image)
+
+	gau = cv2.hconcat(gau)
+
+	cv2.imwrite('gau.jpg', gau)
+
+	lg = cv2.imread('LG.jpg')
+	gau = cv2.imread('gau.jpg')
+
+	full = cv2.hconcat([lg, gau])
+	cv2.imwrite('hconcat.jpg', full)
+
+	finalLM = cv2.imread('LMlarge.jpg')
+	bottom = cv2.imread('hconcat.jpg')
+	final = cv2.vconcat([finalLM, bottom])
+	cv2.imwrite('LMlarge.jpg', final)
+
+	first = cv2.imread('LMsmall.jpg')
+	second = cv2.imread('LMlarge.jpg')
+	finalLM = cv2.vconcat([first, second])
+	
+	print(finalLM)
+	cv2.imwrite('LM.jpg', finalLM)
 
 
 
@@ -529,6 +616,10 @@ def main():
     
 if __name__ == '__main__':
     main()
+ 
+
+
+
  
 
 
