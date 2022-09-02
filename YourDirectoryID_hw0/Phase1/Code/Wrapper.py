@@ -519,24 +519,130 @@ def main():
 	cv2.imwrite('LM.jpg', finalLM)
 
 
-
-
-
-
-
-		
-
-
-
-
-
-
-
 	"""
 	Generate Gabor Filter Bank: (Gabor)
 	Display all the filters in this filter bank and save image as Gabor.png,
 	use command "cv2.imwrite(...)"
 	"""
+
+	#source: https://medium.com/@anuj_shah/through-the-eyes-of-gabor-filter-17d1fdb3ac97
+
+	def gabor(sigma, theta, Lambda, psi, gamma):
+    #Gabor feature extraction.
+	    sigma_x = sigma
+	    sigma_y = float(sigma) / gamma
+
+	    # Bounding box
+	    nstds = 3  # Number of standard deviation sigma
+	    xmax = 200
+	    xmax = np.ceil(max(1, xmax))
+	    ymax = 200
+	    ymax = np.ceil(max(1, ymax))
+	    xmin = -xmax
+	    ymin = -ymax
+	    (y, x) = np.meshgrid(np.arange(ymin, ymax + 1), np.arange(xmin, xmax + 1))
+
+	    # Rotation
+	    x_theta = x * np.cos(theta) + y * np.sin(theta)
+	    y_theta = -x * np.sin(theta) + y * np.cos(theta)
+
+	    
+
+
+	    gb = np.exp(-.5 * (x_theta ** 2 / sigma_x ** 2 + y_theta ** 2 / sigma_y ** 2)) * np.cos(2 * np.pi / Lambda * x_theta + psi)
+	    down_width = 300
+	    down_height = 200
+	    down_points = (down_width, down_height)
+	    resized_down = cv2.resize(gb, down_points, interpolation= cv2.INTER_LINEAR)
+	    return gb
+
+
+
+	theta = 90
+	lam = 30
+	up = False
+
+	row = []
+	
+	gabors = gabor(30, 90, 30, 5, 0.5)
+	gabors = ((gabors- gabors.min()) * (1/(gabors.max() - gabors.min()) * 255)).astype('uint8')
+	row.append(gabors)
+
+	gabor2 = gabor(30, 45, 30, 5, 0.5)
+	gabor2 = ((gabor2- gabor2.min()) * (1/(gabor2.max() - gabor2.min()) * 255)).astype('uint8')
+	row.append(gabor2)
+
+
+	gabor5 = gabor(30, 0, 30, 5, 0.5)
+	gabor5 = ((gabor5- gabor5.min()) * (1/(gabor5.max() - gabor5.min()) * 255)).astype('uint8')
+	row.append(gabor5)
+
+	gabor6 = gabor(30, 20, 30, 5, 0.5)
+	gabor6 = ((gabor6- gabor6.min()) * (1/(gabor6.max() - gabor6.min()) * 255)).astype('uint8')
+	row.append(gabor6)
+
+
+	gabs = cv2.hconcat(row)
+	cv2.imwrite('gabs1.jpg', gabs)
+
+
+	row = []
+
+	gabors1 = gabor(30, 90, 60, 5, 0.5)
+	gabors = ((gabors1- gabors1.min()) * (1/(gabors1.max() - gabors1.min()) * 255)).astype('uint8')
+	row.append(gabors)
+
+	gabors2 = gabor(30, 45, 60, 5, 0.5)
+	gabors2 = ((gabors2- gabors2.min()) * (1/(gabors2.max() - gabors2.min()) * 255)).astype('uint8')
+	row.append(gabors2)
+
+
+	gabors3 = gabor(30, 0, 60, 5, 0.5)
+	gabors3 = ((gabors3- gabors3.min()) * (1/(gabors3.max() - gabors3.min()) * 255)).astype('uint8')
+	row.append(gabors3)
+
+	gabors6 = gabor(30, 20, 60, 5, 0.5)
+	gabors6 = ((gabors6- gabors6.min()) * (1/(gabors6.max() - gabors6.min()) * 255)).astype('uint8')
+	row.append(gabors6)
+
+	gabs2 = cv2.hconcat(row)
+	cv2.imwrite('gabs2.jpg', gabs2)
+
+
+	row = []
+	gabors1 = gabor(30, 90, 100, 5, 0.5)
+	gabors = ((gabors1- gabors1.min()) * (1/(gabors1.max() - gabors1.min()) * 255)).astype('uint8')
+	row.append(gabors)
+
+	gabors2 = gabor(30, 45, 100, 5, 0.5)
+	gabors2 = ((gabors2- gabors2.min()) * (1/(gabors2.max() - gabors2.min()) * 255)).astype('uint8')
+	row.append(gabors2)
+
+
+	gabors3 = gabor(30, 0, 100, 5, 0.5)
+	gabors3 = ((gabors3- gabors3.min()) * (1/(gabors3.max() - gabors3.min()) * 255)).astype('uint8')
+	row.append(gabors3)
+
+	gabors6 = gabor(30, 20, 100, 5, 0.5)
+	gabors6 = ((gabors6- gabors6.min()) * (1/(gabors6.max() - gabors6.min()) * 255)).astype('uint8')
+	row.append(gabors6)
+
+	gabs3 = cv2.hconcat(row)
+	cv2.imwrite('gabs3.jpg', gabs3)
+
+
+
+	g1 = cv2.imread('gabs1.jpg')
+	g2 = cv2.imread('gabs2.jpg')
+	g3 = cv2.imread('gabs3.jpg')
+	allgabs = cv2.vconcat([g1, g2, g3])
+
+
+	cv2.imwrite('Gabor.jpg', allgabs)
+	cv2.imshow('gabor', allgabs)
+	cv2.waitKey(10000)
+
+
 
 
 	"""
