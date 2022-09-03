@@ -132,7 +132,7 @@ def TrainOperation(TrainLabels, NumTrainSamples, ImageSize,
     ###############################################
     # Fill your optimizer of choice here!
     ###############################################
-    Optimizer = ...
+    Optimizer = torch.optim.SGD(model.parameters(), lr=1e-3)
 
     # Tensorboard
     # Create a summary to monitor loss tensor

@@ -27,7 +27,7 @@ def loss_fn(out, labels):
     ###############################################
     # Fill your loss function of choice here!
     ###############################################
-    loss = ...
+    loss = nn.CrossEntropyLoss()
     return loss
 
 class ImageClassificationBase(nn.Module):
@@ -67,6 +67,17 @@ class CIFAR10Model(ImageClassificationBase):
       # Fill your network initialization of choice here!
       #############################
 
+      super(CIFAR10Model, self, InputSize, OutputSize).__init__()
+      self.flatten = nn.Flatten()
+      self.linear_relu_stack = nn.Sequential(
+            nn.Linear(28*28, 512),
+            nn.ReLU(),
+            nn.Linear(512, 512),
+            nn.ReLU(),
+            nn.Linear(512, 10)
+        )
+
+
       
   def forward(self, xb):
       """
@@ -78,6 +89,11 @@ class CIFAR10Model(ImageClassificationBase):
       #############################
       # Fill your network structure of choice here!
       #############################
+      x = self.flatten(x)
+      out = self.linear_relu_stack(x)
      
       return out
+
+model = NeuralNetwork().to(device)
+print(model)
 

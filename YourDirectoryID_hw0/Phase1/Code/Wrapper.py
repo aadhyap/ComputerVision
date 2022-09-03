@@ -147,15 +147,12 @@ def main():
 
 	def Convolve(k, sobel):
 		k = np.array(k)
-
-		
-
 		resulting_image = cv2.filter2D(k, -1, sobel)
 		DoG = ((resulting_image - resulting_image.min()) * (1/(resulting_image.max() - resulting_image.min()) * 255)).astype('uint8')
 		
 					
 		print("RESULTING IMAGE")
-		print(DoG)
+		#print(DoG)
 
 		return DoG
 
@@ -167,6 +164,7 @@ def main():
 
 
 
+	DoGbank = []
 	def rotate(images, num):
 
 
@@ -179,17 +177,26 @@ def main():
 		for image in range(len(images)):
 			DoG = images[image]
 
-			DoG = cv2.resize(DoG, dsize = (0,0),
-                    fx = 1, fy = 1)
+			DoG = cv2.resize(DoG, dsize = (0,0), fx = 1, fy = 1)
 
-
-			
 			for i in range(4):
 				DoG = cv2.rotate(DoG, cv2.ROTATE_90_CLOCKWISE)
-				DoG_img.append(DoG)
-	
+				
 
-		
+
+				#print("FILTER APPLIED")
+
+				#print(filterd)
+
+				#g = ((filterd- filterd.min()) * (1/(filterd.max() - filterd.min()) * 255)).astype('uint8')
+
+				
+
+
+				#DoG = ((DoG - DoG.min()) * (1/(DoG.max() - DoG.min()) * 255)).astype('uint8')
+				DoG_img.append(DoG)
+				DoGbank.append(DoG)
+
 		imgs = cv2.hconcat(DoG_img)
 		
 
@@ -277,10 +284,17 @@ def main():
 			
 				kernel = Gaussian(sigma[sig])
 
+				print("THIS IS LM kernel_size")
+				print(kernel)
+
 				image1 = Convolve(kernel, sobel)
+				print("THIS IS LM convolve")
+				print(image1)
 				image2 = Convolve(kernel, sobel2)
 				allimg = rotationLM(image1, image2, 1)
 				lm1 = cv2.imread('LM1.jpg')
+				print("THIS IS LM 1")
+				print(lm1)
 		
 				LM_1.append(lm1)
 
@@ -331,6 +345,7 @@ def main():
 				image2 = Convolve(kernel, sobel2)
 				allimg = rotationLM(image1, image2, 1)
 				lm1 = cv2.imread('LM1.jpg')
+
 		
 				LM_1.append(lm1)
 
@@ -516,6 +531,8 @@ def main():
 	finalLM = cv2.vconcat([first, second])
 	
 	print(finalLM)
+	print("THIS IS LM")
+	print(finalLM)
 	cv2.imwrite('LM.jpg', finalLM)
 
 
@@ -639,8 +656,7 @@ def main():
 
 
 	cv2.imwrite('Gabor.jpg', allgabs)
-	cv2.imshow('gabor', allgabs)
-	cv2.waitKey(10000)
+
 
 
 
@@ -652,11 +668,99 @@ def main():
 	"""
 
 
+	def create_circular_mask(r):
+
+	    disk =np.ones((2*r,2*r+1))
+	    y,x = np.ogrid[-r:r+1,-r:r+1]
+	   
+
+	    for x in range(-2, 3):
+	    	for y in range(-2, 3):
+	    		if( x*x + y*y <= r):
+	    			disk[x + 2][y + 2] = 0
+
+
+	    return disk
+
+
+	array = create_circular_mask(2)
+	array= ((array- array.min()) * (1/(array.max() - array.min()) * 255)).astype('uint8')
+
+	cv2.imwrite('HDMasks.jpg', array)
+	cv2.imshow('Mask', array)
+	cv2.waitKey(10000)
+
+
 
 	"""
 	Generate Texton Map
 	Filter image using oriented gaussian filter bank
 	"""
+
+	"""
+
+	def textmap(img,bank):
+		
+
+		#for i in range(len(bank)):
+
+		print("CURRRENT IMAGE")
+		print(img)
+
+		print("CURRRENT BANK")
+		print(img)
+		newimg = cv2.filter2D(img, -1, bank)
+
+		#newimg = ((newimg- newimg.min()) * (1/(newimg.max() - newimg.min()) * 255)).astype('uint8')
+			#imgf = np.dstack((img, newimg))
+
+		
+
+		return newimg
+
+
+	imgdir = ['../BSDS500/Images/1.jpg', '../BSDS500/Images/2.jpg', '../BSDS500/Images/3.jpg', '../BSDS500/Images/4.jpg']
+
+
+	print("FILTER BANK SHOULD BE 16 ", len(DoGbank))
+
+	print(" Filter BANK ")
+
+	print(DoGbank)
+
+	allfilimages = []
+
+
+	
+
+	imgarr = cv2.imread(imgdir[0])
+	cv2.imshow("test",imgarr)
+	cv2.waitKey(5000)
+	#for x in range(len(DoGbank)):
+	img = textmap(imgarr, DoGbank[0])
+	imgarr= np.dstack((imgarr, img))
+
+
+
+
+
+
+	
+
+	cv2.imshow("pleasework",imgarr)
+	cv2.waitKey(10000)
+	cv2.imwrite('textmap1.jpg', imgarr)
+
+	"""
+			
+
+
+
+
+
+
+
+
 
 
 	"""
@@ -701,24 +805,28 @@ def main():
 	use command "cv2.imwrite(...)"
 	"""
 
+	for i in range(10):
+		"""
+		Read Sobel Baseline
+		use command "cv2.imread(...)"
+		"""
+		sobel = cv2.imread('../BSDS500/Images/SobelBaseline/' + str(i+1) + 's.png')
 
-	"""
-	Read Sobel Baseline
-	use command "cv2.imread(...)"
-	"""
 
-
-	"""
-	Read Canny Baseline
-	use command "cv2.imread(...)"
-	"""
-
+		"""
+		Read Canny Baseline
+		use command "cv2.imread(...)"
+		"""
+		canny = cv2.imread('../BSDS500/Images/CannyBaseline/' + str(i+1) + 's.png')
 
 	"""
 	Combine responses to get pb-lite output
 	Display PbLite and save image as PbLite_ImageName.png
 	use command "cv2.imwrite(...)"
 	"""
+
+
+		
     
 if __name__ == '__main__':
     main()
